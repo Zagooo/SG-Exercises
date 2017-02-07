@@ -1,0 +1,15 @@
+1 ex.
+100.00 - 100 = 0 - false
+"zero" - true
+"false" - true
+0 + "true" - true
+0.000 - false
+"0.0" - true
+strcmp("false","False") - true
+0 <=> "0" - false 
+
+2 ex.
+Message 3. Age: 12. Shoe_size: 14
+
+3 and 4 exs.
+in php file.
