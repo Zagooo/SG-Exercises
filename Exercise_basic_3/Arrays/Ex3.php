@@ -19,6 +19,8 @@ $il = 0;
 $pa = 0; 
 $az = 0; 
 
+// плохо! см. замечания у Никиты, все то же самое
+
 foreach($usa as $info => $arr){ 
     foreach($arr as $key => $value){ 
             switch($value){ 
