@@ -12,41 +12,14 @@ $usa = [
 ['San Jose', 'CA', 945942] 
 ]; 
 
-$ca = 0; 
-$tx = 0; 
-$ny = 0; 
-$il = 0; 
-$pa = 0; 
-$az = 0; 
+$states = [];
 
-foreach($usa as $info => $arr){ 
-    foreach($arr as $key => $value){ 
-            switch($value){ 
-            case "CA": 
-            $ca += $arr[2]; 
-            break; 
-            case "TX": 
-            $tx += $arr[2]; 
-            break; 
-            case "NY": 
-            $ny += $arr[2]; 
-            break; 
-            case "IL": 
-            $il += $arr[2]; 
-            break; 
-            case "PA": 
-            $pa += $arr[2]; 
-            break; 
-            case "AZ": 
-            $az += $arr[2]; 
-            break; 
-            } 
-    } 
-} 
-
-printf("%-2s: %-8d\n", 'NY', $ny); 
-printf("%-2s: %-8d\n", 'CA', $ca); 
-printf("%-2s: %-8d\n", 'IL', $il); 
-printf("%-2s: %-8d\n", 'TX', $tx); 
-printf("%-2s: %-8d\n", 'PA', $pa); 
-printf("%-2s: %-8d\n", 'AZ', $az);
+foreach(array_keys($usa) as $key){
+    if(!array_key_exists($usa[$key][1], $states)){
+         $states[$usa[$key][1]] = 0;
+    }
+    $states[$usa[$key][1]] += $usa[$key][2];
+}
+foreach($states as $key => $value){
+    printf("%-3s %-8d\n", $key, $value);
+}
