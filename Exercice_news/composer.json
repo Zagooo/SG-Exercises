@@ -1,0 +1,13 @@
+{
+    "name": "zagor/exercice_news",
+    "require": {
+        "simplepie/simplepie": "*",
+        "monolog/monolog": "^1.22"
+    },
+    "authors": [
+        {
+            "name": "ZagoR",
+            "email": "qzzik97@gmail.com"
+        }
+    ]
+}
