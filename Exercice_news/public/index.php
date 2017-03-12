@@ -1,13 +1,12 @@
 <?php
     $con = mysqli_connect('127.0.0.1','root','','sg-news-db');
     if($con ==false){
-      echo "Wrong way";
+      echo "Wrong way ";
       echo mysqli_connect_error();
       exit();
     }
 
     $res = mysqli_query($con, "SELECT * FROM news");
-    
 ?>
 
 <!DOCTYPE html>
@@ -24,13 +23,14 @@
 
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
-        <h1>Новости</h1>
+        <h1>Новини</h1>
       </div>
     </div>
 
     <div class="container">
       <div class="row">
             <?php
+            
               while( ($rec = mysqli_fetch_assoc($res)) )
               {
                 echo '<div class="news">';

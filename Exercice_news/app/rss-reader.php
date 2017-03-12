@@ -1,18 +1,19 @@
 <?php
 
 require_once '../vendor/autoload.php';
-require_once 'logs/logger.php';
+require_once '../logs/logger.php';
 
 
+$connect[dns] = 'mysql:host=localhost; dbname=sg-news-db; charset=utf8';
 $connect[name] = 'root';
 $connect[pass] = '';
-$connect[dns] = 'mysql:host=localhost; dbname=sg-news-db; charset=utf8';
 
 try {
     $db = new PDO($connect[dns], $connect[name], $connect[pass]);
 } catch (PDOException $e) {
     die('Error connection: ' . $e->getMessage());
 }
+
 $que = "INSERT INTO news(title,link,description,source,pub_date) VALUES (?,?,?,?,?)";
 $sql = $db->prepare($que);
 
@@ -32,6 +33,12 @@ foreach ($items as $item)
     $feed->get_link(),
     $item->get_date("Y-m-d H:i:s"),
     ]);
+
+    if(!empty($item->get_title())){
+        $successLogger->info('At the' . ' ' . date("Y-m-d H:i:s") . ' ' . "this news was added"); 
+    }else{
+        $errorLogger->error("Wrong thing at" . ' ' . date("Y-m-d H:i:s"));
+    }
 }
 
       
