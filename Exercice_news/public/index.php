@@ -1,52 +1,62 @@
 <?php
-    $con = mysqli_connect('127.0.0.1','root','','sg-news-db');
-    if($con ==false){
-      echo "Wrong way ";
-      echo mysqli_connect_error();
-      exit();
-    }
 
-    $res = mysqli_query($con, "SELECT * FROM news");
-?>
+require_once '../vendor/autoload.php';
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
-    <title>News</title>
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 
-    <link href="css/style.css" rel="stylesheet">
-  </head>
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 
-  <body>
+// $_SERVER['REQUEST_URI'] = preg_replace('|/$|', '', $_SERVER['REQUEST_URI'], 1);
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <h1>Новини</h1>
-      </div>
-    </div>
+$request = Request::createFromGlobals();
+$response = new Response;
+$session = new Session;
+$session->start();
+$request->setSession($session);
 
-    <div class="container">
-      <div class="row">
-            <?php
-            
-              while( ($rec = mysqli_fetch_assoc($res)) )
-              {
-                echo '<div class="news">';
-                echo '<h2>';
-                echo $rec['title'];
-                echo '</h2>';
-                echo '<h3>';
-                echo $rec['title'] . '<br>';
-                echo $rec['description'] . '<br>';
-                echo $rec['link'] . '<br>';
-                echo $rec['pub_date'];
-                echo '</h3>';
-                echo '</div>';
-              }
-            ?>
-      </div>
-      
-  </body>
-</html>
+$routes = new RouteCollection();
+$routes->add('index', new Route('/', ['_controller' => 'Controller\Front@getIndex'],
+    [], [], '', [], ['GET']));
+$routes->add('get_login', new Route('/login', ['_controller' => 'Controller\Front@getLogin'],
+    [], [], '', [], ['GET']));
+$routes->add('post_login', new Route('/login', ['_controller' => 'Controller\Front@postLogin'],
+    [], [], '', [], ['POST']));
+$routes->add('logout', new Route('/logout', ['_controller' => 'Controller\Front@getLogout'],
+    [], [], '', [], ['GET']));
+$routes->add('cabinet', new Route('/cabinet', ['_controller' => 'Controller\Cabinet@getIndex'],
+    [], [], '', [], ['GET']));
+$context = new RequestContext();
+$context->fromRequest($request);
+$matcher = new UrlMatcher($routes, $context);
+try {
+    $parameters = $matcher->matchRequest($request);
+    $request->attributes->replace($parameters);
+    $action = $parameters['_controller'];
+} catch (Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {
+    $response->setStatusCode('404');
+    $response->setContent('404: Page not found');
+} catch (Symfony\Component\Routing\Exception\MethodNotAllowedException $e) {
+    $response->setStatusCode('405');
+    $response->setContent('405: Method not allowed');
+}
+if (isset($action) && is_string($action)) {
+    $controller = explode('@', $action);
+    $controller_class_name = $controller[0];
+    $controller_instance = new $controller_class_name;
+    $method = $controller[1];
+    $response = $controller_instance->$method($request, $response);
+}
+if (isset($action) && is_callable($action)) {
+    $response = $action($request, $response);
+}
+// if (! isset($action)) {
+//     $response->setStatusCode('404');
+//     $response->setContent('404: Page not found');
+// }
+$response->send();

@@ -2,7 +2,7 @@
 
 require_once '../vendor/autoload.php';
 require_once '../logs/logger.php';
-
+//require_once '../app/routing.php';
 
 $connect[dns] = 'mysql:host=localhost; dbname=sg-news-db; charset=utf8';
 $connect[name] = 'root';
@@ -14,7 +14,7 @@ try {
     die('Error connection: ' . $e->getMessage());
 }
 
-$que = "INSERT INTO news(title,link,description,source,pub_date) VALUES (?,?,?,?,?)";
+$que = "INSERT IGNORE INTO news(title,link,description,source,pub_date) VALUES (?,?,?,?,?)";
 $sql = $db->prepare($que);
 
 $feed = new SimplePie();
@@ -30,7 +30,7 @@ foreach ($items as $item)
     $item->get_title(),
     $item->get_link(),
     $item->get_description(),
-    $feed->get_link(),
+    $item->get_feed()->get_link(),
     $item->get_date("Y-m-d H:i:s"),
     ]);
 
