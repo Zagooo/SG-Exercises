@@ -9,7 +9,7 @@ class Ingredient{
     public function getCost(){
         return $this->cost;
     }
-    public function changeCost($cost){
+    public function setCost($cost){
         $this->cost = $cost;
     }
 
